@@ -34,6 +34,8 @@ button{cursor:pointer}
 .gbox{background:#fff;border-radius:28px;padding:clamp(24px,5vw,44px);max-width:460px;width:100%;box-shadow:12px 12px 0 var(--p)}
 .gbox h1{font-size:30px}.gbox p{color:#5c4760;margin:.6em 0}
 .lock{width:64px;height:64px;border-radius:20px;background:var(--p2);display:grid;place-items:center;margin-bottom:18px;background:#ffe0ec}
+.lform{display:grid;gap:6px;margin-top:18px}.lform label{font-size:14px;font-weight:600}.lform input{min-height:48px;border-radius:14px;border:2px solid #f1e3c4;padding:0 14px;background:#fff;color:#2b1330}.lform .btn{margin-top:10px}
+.linkbtn{background:none;border:0;color:#c42a66;text-decoration:underline;min-height:40px;font-size:14px}
 .gbtn{margin-top:18px;width:100%;min-height:52px;display:flex;gap:12px;align-items:center;justify-content:center;border-radius:999px;border:2px solid #2b1330;background:#fff;font-weight:600;color:#2b1330}
 .gbtn:disabled{opacity:.5;cursor:wait}
 .gstate{margin-top:18px;padding:14px 16px;border-radius:14px;background:#fff6d6;font-size:15px}
@@ -127,7 +129,19 @@ footer a{color:var(--pk)}
     <div class="lock"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e8407f" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4" fill="#e8407f"/></svg></div>
     <h1>ระบบรายงานสมาชิกสมาคม</h1>
     <p>สำหรับผู้ดูแลระบบเท่านั้น ระบบจะตรวจอีเมลบัญชีที่เข้าใช้ให้ตรงกับ <b>admin@thaifuturefood.org</b></p>
-    <button class="gbtn" id="signin" disabled><svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>เข้าสู่ระบบด้วย Google</button>
+    <form id="loginForm" class="lform" autocomplete="on">
+      <label for="em">อีเมล</label>
+      <input id="em" type="email" autocomplete="username" value="admin@thaifuturefood.org" required>
+      <label for="pw">รหัสผ่าน</label>
+      <input id="pw" type="password" autocomplete="current-password" required>
+      <button class="btn pk" id="signin" type="submit" disabled>เข้าสู่ระบบ</button>
+      <button class="linkbtn" id="forgot" type="button">ลืมรหัสผ่าน?</button>
+    </form>
+    <form id="resetForm" class="lform" hidden>
+      <label for="npw">ตั้งรหัสผ่านใหม่ (อย่างน้อย 8 ตัว)</label>
+      <input id="npw" type="password" autocomplete="new-password" minlength="8" required>
+      <button class="btn pk" type="submit">บันทึกรหัสผ่านใหม่</button>
+    </form>
     <div class="gstate" id="gstate">กำลังเตรียมระบบเข้าสู่ระบบ…</div>
   </div>
 </section>
@@ -193,10 +207,10 @@ footer a{color:var(--pk)}
       <div class="q"><div class="qn"><b>2</b><h3>ต่อกับอะไรบ้าง</h3></div>
         <p class="note" style="margin:0">Sheets, Supabase, Connector ไหน</p>
         <ul>
-          <li><b>Google Drive / Sheets</b> — ไฟล์ "TFFA ทะเบียนสมาชิกสมาคม" เป็นฐานข้อมูล แก้ใน Sheet แล้วเว็บอัปเดตเอง</li>
-          <li><b>Google Sheets API</b> อ่านข้อมูลด้วยสิทธิ์ Google ของผู้เข้าใช้ ข้อมูลไม่ฝังในหน้าเว็บ</li>
-          <li><b>Google Sign-In</b> ตรวจอีเมลต้องเป็น admin@thaifuturefood.org</li><li><b>GitHub Pages</b> โฮสต์เว็บ เปิดได้ทุกเครื่อง</li>
-          <li>ไม่ใช้ Supabase — ข้อมูล 70 ราย Sheet เพียงพอ</li>
+          <li><b>Supabase</b> — ตาราง <code>tffa_members</code> เป็นฐานข้อมูล ล็อกด้วย Row Level Security ให้อ่าน/แก้ได้เฉพาะ admin</li>
+          <li><b>Supabase Auth</b> เข้าสู่ระบบด้วยอีเมล/รหัสผ่าน ข้อมูลไม่ฝังในหน้าเว็บ</li>
+          <li><b>Google Drive</b> — ไฟล์ Excel/Sheet ต้นฉบับ ใช้เป็นที่นำเข้าข้อมูล</li><li><b>GitHub Pages</b> โฮสต์เว็บ เปิดได้ทุกเครื่อง</li>
+          
         </ul></div>
       <div class="q"><div class="qn"><b>3</b><h3>จะทำอะไรต่อ</h3></div>
         <p class="note" style="margin:0">ฟีเจอร์ถัดไป หรือใครจะได้ใช้</p>
@@ -212,14 +226,14 @@ footer a{color:var(--pk)}
         <div style="display:flex;gap:8px"><button class="btn y" id="tStart">เริ่มจับเวลา</button><button class="btn" style="border-color:#fff;color:#fff" id="tReset">รีเซ็ต</button></div>
       </div>
     </div>
-    <div class="script"><b>บทพูด 60 วินาที:</b> "สมาคมมีสมาชิก <span class="liveTotal">70</span> ราย ข้อมูลเดิมอยู่ใน Excel ที่เปิดบนมือถือแทบไม่ได้ เราย้ายข้อมูลขึ้น Google Drive แล้วทำเว็บนี้อ่านจาก Sheet โดยตรง เข้าได้เฉพาะบัญชี admin ของสมาคม — ค้นชื่อบริษัท ดูผู้แทนทั้งสองคน ที่อยู่ว่าเป็นสำนักงานใหญ่หรือสาขา ประเภทสมาชิก ประเภทวิสาหกิจ และเบอร์ติดต่อได้ในหน้าเดียว ขั้นต่อไปคือฟอร์มแก้ไขข้อมูลและแจ้งเตือนต่ออายุ ให้ฝ่ายทะเบียนและกรรมการใช้ร่วมกัน" — แล้วเปิดเว็บจริงบนมือถือให้ดู ดีกว่าสไลด์ 10 หน้า</div>
+    <div class="script"><b>บทพูด 60 วินาที:</b> "สมาคมมีสมาชิก <span class="liveTotal">70</span> ราย ข้อมูลเดิมอยู่ใน Excel ที่เปิดบนมือถือแทบไม่ได้ เราย้ายข้อมูลขึ้นฐานข้อมูล Supabase แล้วทำเว็บนี้บน GitHub Pages เข้าได้เฉพาะบัญชี admin ของสมาคม ฐานข้อมูลเองก็ล็อกไม่ให้คนอื่นอ่าน — ค้นชื่อบริษัท ดูผู้แทนทั้งสองคน ที่อยู่ว่าเป็นสำนักงานใหญ่หรือสาขา ประเภทสมาชิก ประเภทวิสาหกิจ และเบอร์ติดต่อได้ในหน้าเดียว ขั้นต่อไปคือฟอร์มแก้ไขข้อมูลและแจ้งเตือนต่ออายุ ให้ฝ่ายทะเบียนและกรรมการใช้ร่วมกัน" — แล้วเปิดเว็บจริงบนมือถือให้ดู ดีกว่าสไลด์ 10 หน้า</div>
   </div></section>
 </main>
 
-<footer class="band" style="padding-block:20px"><div class="wrap" id="src">แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1rRjx-o-7cvIqdhHVPc1lbYqYFlX5R2m_zcQvX94aDDs/edit" target="_blank" rel="noopener">Google Sheets · TFFA ทะเบียนสมาชิกสมาคม</a> (จากไฟล์ทะเบียนสมาชิก update 13/03/2568)</div></footer>
+<footer class="band" style="padding-block:20px"><div class="wrap" id="src">แหล่งข้อมูล: Supabase · ตาราง tffa_members (นำเข้าจากไฟล์ทะเบียนสมาชิก update 13/03/2568)</div></footer>
 </div>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script>
 {
@@ -230,52 +244,65 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let rows=[],mt='',started=false;
 
-/* ---------- Google sign-in gate ---------- */
-const CLIENT_ID=(window.TFFA_CONFIG&&window.TFFA_CONFIG.clientId)||'';
-const SCOPES='openid email https://www.googleapis.com/auth/spreadsheets.readonly';
-const gs=$('gstate');let token=null,tokenClient=null,timer=null;
+/* ---------- Supabase login gate ---------- */
+const CFG=window.TFFA_CONFIG||{};
+const gs=$('gstate');let sb=null,timer=null;
 function gateMsg(html,bad){gs.innerHTML=html;gs.className='gstate'+(bad?' bad':'');}
-function initGis(){
-  if(!CLIENT_ID){gateMsg('ยังไม่ได้ตั้งค่า Google OAuth Client ID ในไฟล์ <b>config.js</b> (ดูวิธีใน README)',true);return;}
-  if(!(window.google&&google.accounts&&google.accounts.oauth2)){setTimeout(initGis,200);return;}
-  tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,hint:ADMIN,prompt:'',callback:onToken,
-    error_callback:e=>gateMsg('ยกเลิกหรือเข้าสู่ระบบไม่สำเร็จ ('+esc(e.type||'error')+') ลองอีกครั้ง',true)});
-  $('signin').disabled=false;gateMsg('กดปุ่มด้านบน แล้วเลือกบัญชี admin@thaifuturefood.org');
+function initSb(){
+  if(!CFG.supabaseUrl||!CFG.supabaseKey){gateMsg('ยังไม่ได้ตั้งค่า Supabase ในไฟล์ <b>config.js</b>',true);return;}
+  if(!window.supabase){setTimeout(initSb,150);return;}
+  sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  sb.auth.onAuthStateChange((ev,session)=>{
+    if(ev==='PASSWORD_RECOVERY'){$('loginForm').hidden=true;$('resetForm').hidden=false;gateMsg('ตั้งรหัสผ่านใหม่สำหรับ '+esc(session?.user?.email||''));return;}
+    if(ev==='SIGNED_OUT'){showGate('ออกจากระบบแล้ว');}
+  });
+  sb.auth.getSession().then(({data})=>{const s=data.session;if(s&&$('resetForm').hidden)checkUser(s.user);else{$('signin').disabled=false;if($('resetForm').hidden)gateMsg('กรอกรหัสผ่านของบัญชี admin@thaifuturefood.org');}});
 }
-$('signin').onclick=()=>{if(tokenClient){gateMsg('กำลังเปิดหน้าต่าง Google…');tokenClient.requestAccessToken();}};
-async function onToken(r){
-  if(r.error){gateMsg('เข้าสู่ระบบไม่สำเร็จ: '+esc(r.error),true);return;}
-  token=r.access_token;
-  try{
-    const u=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+token}})).json();
-    const em=(u.email||'').toLowerCase();
-    if(em!==ADMIN||u.email_verified===false){google.accounts.oauth2.revoke(token,()=>{});token=null;
-      gateMsg('บัญชี <b>'+esc(u.email||'ไม่ทราบ')+'</b> ไม่มีสิทธิ์เข้าใช้ระบบนี้ กรุณาเข้าสู่ระบบด้วย admin@thaifuturefood.org',true);return;}
-    enter(u.email);
-  }catch(e){gateMsg('ตรวจสอบบัญชีไม่สำเร็จ ลองอีกครั้ง',true);}
+async function checkUser(u){
+  if((u?.email||'').toLowerCase()!==ADMIN){await sb.auth.signOut();showGate('บัญชี <b>'+esc(u?.email||'')+'</b> ไม่มีสิทธิ์เข้าใช้ระบบนี้',true);return;}
+  enter(u.email);
 }
-initGis();
-$('logout').onclick=()=>{if(token)google.accounts.oauth2.revoke(token,()=>{});token=null;rows=[];clearInterval(timer);started=false;
-  $('app').hidden=true;$('gate').hidden=false;$('grid').innerHTML='';gateMsg('ออกจากระบบแล้ว');};
+$('loginForm').onsubmit=async e=>{e.preventDefault();
+  const em=$('em').value.trim().toLowerCase();
+  if(em!==ADMIN){gateMsg('ระบบนี้เข้าได้เฉพาะ admin@thaifuturefood.org',true);return;}
+  $('signin').disabled=true;gateMsg('กำลังเข้าสู่ระบบ…');
+  const {data,error}=await sb.auth.signInWithPassword({email:em,password:$('pw').value});
+  $('signin').disabled=false;$('pw').value='';
+  if(error){gateMsg(error.message==='Invalid login credentials'?'อีเมลหรือรหัสผ่านไม่ถูกต้อง':'เข้าสู่ระบบไม่สำเร็จ: '+esc(error.message),true);return;}
+  checkUser(data.user);
+};
+$('forgot').onclick=async()=>{
+  const em=$('em').value.trim().toLowerCase();
+  if(em!==ADMIN){gateMsg('กรอกอีเมล admin@thaifuturefood.org ก่อน',true);return;}
+  const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});
+  gateMsg(error?('ส่งอีเมลไม่สำเร็จ: '+esc(error.message)):'ส่งลิงก์ตั้งรหัสผ่านใหม่ไปที่ '+esc(em)+' แล้ว เปิดลิงก์จากอีเมลบนเครื่องนี้',!!error);
+};
+$('resetForm').onsubmit=async e=>{e.preventDefault();
+  const {data,error}=await sb.auth.updateUser({password:$('npw').value});$('npw').value='';
+  if(error){gateMsg('ตั้งรหัสผ่านไม่สำเร็จ: '+esc(error.message),true);return;}
+  history.replaceState(null,'',location.pathname);$('resetForm').hidden=true;$('loginForm').hidden=false;checkUser(data.user);
+};
+function showGate(msg,bad){rows=[];clearInterval(timer);timer=null;started=false;$('grid').innerHTML='';
+  $('app').hidden=true;$('gate').hidden=false;$('signin').disabled=false;gateMsg(msg,bad);}
+$('logout').onclick=()=>sb.auth.signOut();
+initSb();
 
 function enter(label){
   $('gate').hidden=true;$('app').hidden=false;$('who').textContent='เข้าสู่ระบบ: '+label;
   route();if(!started){started=true;loadData();timer=setInterval(loadData,300000);}
 }
 
-/* ---------- data from Google Drive (Sheets API) ---------- */
+/* ---------- data from Supabase ---------- */
+const MAP={member_no:'เลขที่',name_th:'ชื่อบริษัท (ไทย)',name_en:'ชื่อบริษัท (อังกฤษ)',tax_id:'เลขทะเบียนนิติบุคคล',rep1_th:'ผู้แทน 1',rep1_en:'ผู้แทน 1 (EN)',rep2_th:'ผู้แทน 2',rep2_en:'ผู้แทน 2 (EN)',address:'ที่อยู่สำนักงาน',office:'สำนักงาน',province:'จังหวัด',member_type:'ประเภทสมาชิก',enterprise_size:'ประเภทวิสาหกิจ',business_type:'ลักษณะธุรกิจ',contact_person:'ผู้ติดต่อ',phone:'โทรศัพท์',fax:'โทรสาร',email:'อีเมล',website:'เว็บไซต์',joined_on:'วันเริ่มสมาชิกภาพ'};
 async function loadData(){
-  if(!token)return;
-  try{
-    const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET+'/values/'+encodeURIComponent(RANGE),{headers:{Authorization:'Bearer '+token}});
-    if(res.status===401){showErr('สิทธิ์เข้าใช้หมดอายุ (ครบ 1 ชั่วโมง) กดออกจากระบบแล้วเข้าสู่ระบบใหม่');return;}
-    if(res.status===403||res.status===404){showErr('บัญชีนี้ไม่มีสิทธิ์เปิด Google Sheet ทะเบียนสมาชิก หรือไม่พบไฟล์');rows=[];render();return;}
-    if(!res.ok){showErr('โหลดข้อมูลไม่สำเร็จ ('+res.status+')',true);return;}
-    const v=(await res.json()).values;
-    if(!Array.isArray(v)||v.length<2){showErr('ไม่พบข้อมูลในชีต Members');return;}
-    $('err').innerHTML='';parse(v);
-    $('src').innerHTML=$('src').innerHTML.split(' · อัปเดต')[0]+' · อัปเดต '+esc(new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}));
-  }catch(e){showErr('เชื่อมต่อ Google ไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่',true);}
+  if(!sb)return;
+  const {data,error}=await sb.from('tffa_members').select(Object.keys(MAP).join(',')).order('member_no');
+  if(error){showErr(error.code==='PGRST301'||/JWT/.test(error.message)?'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่':'โหลดข้อมูลไม่สำเร็จ: '+error.message,true);return;}
+  if(!data.length){showErr('ไม่พบข้อมูลสมาชิก หรือบัญชีนี้ไม่มีสิทธิ์อ่านตาราง');rows=[];render();return;}
+  const keys=Object.keys(MAP);
+  parse([keys.map(k=>MAP[k])].concat(data.map(r=>keys.map(k=>r[k]??''))));
+  $('err').innerHTML='';
+  $('src').innerHTML=$('src').innerHTML.split(' · อัปเดต')[0]+' · อัปเดต '+esc(new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}));
 }
 function showErr(m,canRetry){
   $('err').innerHTML='<div class="alert">'+esc(m)+(canRetry?' <button class="btn pk" id="again" style="margin-left:8px">ลองอีกครั้ง</button>':'')+'</div>';

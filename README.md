@@ -1,6 +1,6 @@
 # รายงานสรุปสมาชิกสมาคม · Thai Future Food
 
-เว็บรายงานทะเบียนสมาชิกสมาคม ธีมสีเหลือง-ชมพู อ่านข้อมูลจาก Google Sheets ใน Google Drive
+เว็บรายงานทะเบียนสมาชิกสมาคม ธีมสีเหลือง-ชมพู เก็บข้อมูลใน Supabase
 เข้าใช้ได้เฉพาะบัญชี Google **admin@thaifuturefood.org**
 
 ## ทำอะไรได้
@@ -13,60 +13,35 @@
 ## ทำงานอย่างไร
 | ส่วน | ใช้อะไร |
 |---|---|
-| โฮสต์ | GitHub Pages (`index.html`) |
-| เข้าสู่ระบบ | Google Sign-In (Google Identity Services) ตรวจว่าอีเมลเป็น `admin@thaifuturefood.org` |
-| ฐานข้อมูล | Google Sheet "TFFA ทะเบียนสมาชิกสมาคม (ข้อมูลเว็บรายงาน)" ชีต `Members` ใน Drive ของ admin |
-| ดึงข้อมูล | Google Sheets API (อ่านอย่างเดียว) ด้วยสิทธิ์ของคนที่เข้าสู่ระบบ รีเฟรชทุก 5 นาที |
+| โฮสต์ | GitHub Pages — https://admin-tfa.github.io/tffa-member-report/ |
+| เข้าสู่ระบบ | Supabase Auth (อีเมล + รหัสผ่าน) รับเฉพาะ `admin@thaifuturefood.org` |
+| ฐานข้อมูล | Supabase ตาราง `public.tffa_members` (70 ราย) |
+| ล็อกข้อมูล | Row Level Security: อ่าน/เพิ่ม/แก้/ลบ ได้เมื่อ JWT email = `admin@thaifuturefood.org` เท่านั้น ผู้ใช้ที่ไม่ได้ล็อกอิน (anon) ไม่มีสิทธิ์ในตารางเลย |
+| ต้นฉบับ | ไฟล์ Excel ทะเบียนสมาชิก และ Google Sheet ใน Drive ของ admin |
 
 ป้องกันไว้ 2 ชั้น:
-1. หน้าเว็บตรวจอีเมลที่ Google ยืนยันแล้ว ถ้าไม่ตรงจะยกเลิกสิทธิ์ทันที
-2. Google เองไม่ยอมให้บัญชีที่ไม่มีสิทธิ์ในไฟล์อ่าน Sheet
+1. หน้าเว็บรับเฉพาะอีเมล admin และออกจากระบบทันทีถ้าเป็นบัญชีอื่น
+2. ฐานข้อมูลเองไม่ส่งข้อมูลให้ใครนอกจาก admin แม้มีคนเอา key ในหน้าเว็บไปเรียก API ตรง ๆ
 
-ข้อมูลสมาชิก**ไม่ได้**อยู่ใน repo นี้ และไม่ได้ฝังในหน้าเว็บ
+`supabaseKey` ใน `config.js` เป็น publishable key ออกแบบมาให้อยู่ในหน้าเว็บได้ **ห้ามใส่ service_role key**
 
-## ตั้งค่าครั้งแรก (ทำครั้งเดียว ประมาณ 10 นาที)
-
-### 1. เปิด GitHub Pages
-Settings › Pages › Build and deployment › Source: **Deploy from a branch** › Branch: **main** / **(root)** › Save
-จะได้ URL `https://admin-tfa.github.io/tffa-member-report/`
-
-> GitHub Pages ของ repo แบบ private ใช้ได้เฉพาะแพ็กเกจ GitHub แบบเสียเงิน (Pro/Team) ถ้าเป็นบัญชีฟรี repo ต้องเป็น public ซึ่งยังปลอดภัย เพราะใน repo ไม่มีข้อมูลสมาชิก
-
-### 2. สร้าง OAuth Client ID ใน Google Cloud (ล็อกอินด้วย admin@thaifuturefood.org)
-1. ไปที่ https://console.cloud.google.com/ › สร้างโปรเจกต์ใหม่ เช่น `tffa-member-report`
-2. **APIs & Services › Library** › เปิดใช้ **Google Sheets API**
-3. **APIs & Services › OAuth consent screen** (หรือ Google Auth Platform › Branding/Audience)
-   - User type: **Internal** (ใช้ได้เพราะ thaifuturefood.org เป็น Google Workspace และไม่ต้องผ่านการตรวจสอบของ Google)
-   - ใส่ชื่อแอป เช่น "TFFA Member Report" และอีเมลติดต่อ
-   - Scopes: `openid`, `email`, `.../auth/spreadsheets.readonly`
-4. **APIs & Services › Credentials › Create credentials › OAuth client ID**
-   - Application type: **Web application**
-   - Authorized JavaScript origins: `https://admin-tfa.github.io`
-     (ถ้าทดสอบในเครื่อง เพิ่ม `http://localhost:8000`)
-   - ไม่ต้องใส่ Redirect URI
-5. คัดลอก **Client ID** (ลงท้ายด้วย `.apps.googleusercontent.com`)
-
-### 3. ใส่ Client ID ใน `config.js`
-```js
-window.TFFA_CONFIG = {
-  clientId: '1234567890-xxxx.apps.googleusercontent.com'
-};
-```
-แล้ว commit ขึ้น `main` จากนั้นรอ GitHub Pages อัปเดตประมาณ 1 นาที
-Client ID เผยแพร่ได้ แต่**ห้ามใส่ Client Secret** ในไฟล์นี้
-
-### ทดสอบในเครื่อง
-```bash
-python3 -m http.server 8000
-# เปิด http://localhost:8000
-```
+## การใช้งาน
+- เข้า https://admin-tfa.github.io/tffa-member-report/ แล้วกรอกรหัสผ่านของ admin@thaifuturefood.org (บัญชีใน Supabase Auth)
+- ระบบจำการเข้าสู่ระบบไว้ในเบราว์เซอร์ และต่ออายุให้อัตโนมัติ กด "ออกจากระบบ" เมื่อใช้เครื่องสาธารณะ
+- ลืมรหัสผ่าน: กด "ลืมรหัสผ่าน?" ระบบจะส่งลิงก์ไปที่อีเมล admin
+  ต้องเพิ่ม `https://admin-tfa.github.io/tffa-member-report/` ใน Supabase › Authentication › URL Configuration › Redirect URLs ก่อน ลิงก์ถึงจะพากลับมาหน้านี้
+- เพิ่ม/แก้ข้อมูลสมาชิก: Supabase › Table Editor › `tffa_members` เว็บจะอัปเดตภายใน 5 นาที หรือกดรีเฟรชหน้า
 
 ## ไฟล์
-- `index.html` — เว็บสำหรับ GitHub Pages (Google Sign-In + Sheets API)
-- `config.js` — ตั้งค่า Google OAuth Client ID
-- `claude-artifact.html` — เวอร์ชันที่รันใน claude.ai (ใช้ Claude connector และตรวจบัญชี Claude)
+- `index.html` — เว็บหลัก (Supabase Auth + Supabase database)
+- `config.js` — URL และ publishable key ของ Supabase, Google OAuth Client ID
+- `google-sheets.html` — เวอร์ชันสำรอง: เข้าสู่ระบบด้วย Google และอ่านจาก Google Sheet
+- `claude-artifact.html` — เวอร์ชันที่รันใน claude.ai
 
-## โครงสร้างคอลัมน์ในชีต `Members`
+## ตาราง `tffa_members`
+`member_no` เลขที่ · `name_th` / `name_en` ชื่อบริษัท · `tax_id` เลขนิติบุคคล · `rep1_th` / `rep1_en` ผู้แทน 1 · `rep2_th` / `rep2_en` ผู้แทน 2 · `address` ที่อยู่สำนักงาน · `office` สำนักงานใหญ่/สาขาที่… · `province` จังหวัด · `member_type` สามัญ/วิสามัญ · `enterprise_size` ประเภทวิสาหกิจ · `business_type` ลักษณะธุรกิจ · `contact_person` · `phone` · `fax` · `email` · `website` · `joined_on` วันเริ่มสมาชิกภาพ
+
+## โครงสร้างคอลัมน์ในชีต `Members` (google-sheets.html)
 เลขที่ · ชื่อบริษัท (ไทย) · ชื่อบริษัท (อังกฤษ) · เลขทะเบียนนิติบุคคล · ผู้แทน 1 · ผู้แทน 1 (EN) · ผู้แทน 2 · ผู้แทน 2 (EN) · ที่อยู่สำนักงาน · สำนักงาน · จังหวัด · ประเภทสมาชิก · ประเภทวิสาหกิจ · ลักษณะธุรกิจ · ผู้ติดต่อ · โทรศัพท์ · โทรสาร · อีเมล · เว็บไซต์ · วันเริ่มสมาชิกภาพ
 
 ถ้าเพิ่มหรือแก้สมาชิกใน Sheet เว็บจะอัปเดตเองภายใน 5 นาที ให้คงชื่อหัวคอลัมน์ไว้ตามนี้
