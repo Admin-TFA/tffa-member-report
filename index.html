@@ -34,6 +34,8 @@ button{cursor:pointer}
 .gbox{background:#fff;border-radius:28px;padding:clamp(24px,5vw,44px);max-width:460px;width:100%;box-shadow:12px 12px 0 var(--p)}
 .gbox h1{font-size:30px}.gbox p{color:#5c4760;margin:.6em 0}
 .lock{width:64px;height:64px;border-radius:20px;background:var(--p2);display:grid;place-items:center;margin-bottom:18px;background:#ffe0ec}
+.gbtn{margin-top:18px;width:100%;min-height:52px;display:flex;gap:12px;align-items:center;justify-content:center;border-radius:999px;border:2px solid #2b1330;background:#fff;font-weight:600;color:#2b1330}
+.gbtn:disabled{opacity:.5;cursor:wait}
 .gstate{margin-top:18px;padding:14px 16px;border-radius:14px;background:#fff6d6;font-size:15px}
 .gstate.bad{background:#ffe0ec;color:#8c1c4a}
 .gstate b{word-break:break-all}
@@ -125,8 +127,8 @@ footer a{color:var(--pk)}
     <div class="lock"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e8407f" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4" fill="#e8407f"/></svg></div>
     <h1>ระบบรายงานสมาชิกสมาคม</h1>
     <p>สำหรับผู้ดูแลระบบเท่านั้น ระบบจะตรวจอีเมลบัญชีที่เข้าใช้ให้ตรงกับ <b>admin@thaifuturefood.org</b></p>
-    <div class="gstate" id="gstate">กำลังตรวจสอบบัญชีผู้ใช้…</div>
-    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pk" id="retry" hidden>ตรวจสอบอีกครั้ง</button></div>
+    <button class="gbtn" id="signin" disabled><svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>เข้าสู่ระบบด้วย Google</button>
+    <div class="gstate" id="gstate">กำลังเตรียมระบบเข้าสู่ระบบ…</div>
   </div>
 </section>
 
@@ -136,7 +138,7 @@ footer a{color:var(--pk)}
     <div class="topbar">
       <div class="brand"><span class="dot">TF</span><span>Thai Future Food · ทะเบียนสมาชิก</span></div>
       <nav><a href="#report" id="n-report">รายงาน</a><a href="#pitch" id="n-pitch">นำเสนอ 1 นาที</a></nav>
-      <span class="who" id="who"></span>
+      <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="who" id="who"></span><button class="btn" id="logout" style="min-height:36px;padding:0 14px;font-size:14px">ออกจากระบบ</button></span>
     </div>
     <div class="hero" id="heroBox">
       <div>
@@ -192,8 +194,8 @@ footer a{color:var(--pk)}
         <p class="note" style="margin:0">Sheets, Supabase, Connector ไหน</p>
         <ul>
           <li><b>Google Drive / Sheets</b> — ไฟล์ "TFFA ทะเบียนสมาชิกสมาคม" เป็นฐานข้อมูล แก้ใน Sheet แล้วเว็บอัปเดตเอง</li>
-          <li><b>Google Sheets Connector</b> ของ Claude อ่านข้อมูลด้วยสิทธิ์ของผู้เปิดดู ข้อมูลไม่ฝังในหน้าเว็บ</li>
-          <li><b>บัญชี Claude</b> ตรวจอีเมลต้องเป็น admin@thaifuturefood.org</li>
+          <li><b>Google Sheets API</b> อ่านข้อมูลด้วยสิทธิ์ Google ของผู้เข้าใช้ ข้อมูลไม่ฝังในหน้าเว็บ</li>
+          <li><b>Google Sign-In</b> ตรวจอีเมลต้องเป็น admin@thaifuturefood.org</li><li><b>GitHub Pages</b> โฮสต์เว็บ เปิดได้ทุกเครื่อง</li>
           <li>ไม่ใช้ Supabase — ข้อมูล 70 ราย Sheet เพียงพอ</li>
         </ul></div>
       <div class="q"><div class="qn"><b>3</b><h3>จะทำอะไรต่อ</h3></div>
@@ -217,6 +219,8 @@ footer a{color:var(--pk)}
 <footer class="band" style="padding-block:20px"><div class="wrap" id="src">แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1rRjx-o-7cvIqdhHVPc1lbYqYFlX5R2m_zcQvX94aDDs/edit" target="_blank" rel="noopener">Google Sheets · TFFA ทะเบียนสมาชิกสมาคม</a> (จากไฟล์ทะเบียนสมาชิก update 13/03/2568)</div></footer>
 </div>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="config.js"></script>
 <script>
 {
 const ADMIN='admin@thaifuturefood.org';
@@ -226,58 +230,57 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let rows=[],mt='',started=false;
 
-/* ---------- gate ---------- */
-const gs=$('gstate');
+/* ---------- Google sign-in gate ---------- */
+const CLIENT_ID=(window.TFFA_CONFIG&&window.TFFA_CONFIG.clientId)||'';
+const SCOPES='openid email https://www.googleapis.com/auth/spreadsheets.readonly';
+const gs=$('gstate');let token=null,tokenClient=null,timer=null;
 function gateMsg(html,bad){gs.innerHTML=html;gs.className='gstate'+(bad?' bad':'');}
-async function checkGate(){
-  $('retry').hidden=true;gateMsg('กำลังตรวจสอบบัญชีผู้ใช้…');
-  const user=window.claude?await window.claude.use('user'):null;
-  if(!user){gateMsg('เปิดหน้านี้ผ่าน claude.ai ด้วยบัญชี admin@thaifuturefood.org เพื่อเข้าสู่ระบบ',true);$('retry').hidden=false;return;}
-  const me=await user.me();
-  const em=(me.email||'').trim().toLowerCase();
-  if(em===ADMIN||(!me.email&&me.isOwner)){enter(me.email||'เจ้าของระบบ');return;}
-  if(em)gateMsg('บัญชี <b>'+esc(me.email)+'</b> ไม่มีสิทธิ์เข้าใช้ระบบนี้ กรุณาเข้าสู่ระบบด้วย admin@thaifuturefood.org',true);
-  else gateMsg('ไม่สามารถอ่านอีเมลของบัญชีนี้ได้ จึงไม่อนุญาตให้เข้าใช้ กรุณาเข้าสู่ระบบด้วย admin@thaifuturefood.org',true);
-  $('retry').hidden=false;
+function initGis(){
+  if(!CLIENT_ID){gateMsg('ยังไม่ได้ตั้งค่า Google OAuth Client ID ในไฟล์ <b>config.js</b> (ดูวิธีใน README)',true);return;}
+  if(!(window.google&&google.accounts&&google.accounts.oauth2)){setTimeout(initGis,200);return;}
+  tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,hint:ADMIN,prompt:'',callback:onToken,
+    error_callback:e=>gateMsg('ยกเลิกหรือเข้าสู่ระบบไม่สำเร็จ ('+esc(e.type||'error')+') ลองอีกครั้ง',true)});
+  $('signin').disabled=false;gateMsg('กดปุ่มด้านบน แล้วเลือกบัญชี admin@thaifuturefood.org');
 }
-$('retry').onclick=checkGate;
-let tries=0;(function wait(){if(window.claude)checkGate();else if(++tries<40)setTimeout(wait,250);else checkGate();})();
+$('signin').onclick=()=>{if(tokenClient){gateMsg('กำลังเปิดหน้าต่าง Google…');tokenClient.requestAccessToken();}};
+async function onToken(r){
+  if(r.error){gateMsg('เข้าสู่ระบบไม่สำเร็จ: '+esc(r.error),true);return;}
+  token=r.access_token;
+  try{
+    const u=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+token}})).json();
+    const em=(u.email||'').toLowerCase();
+    if(em!==ADMIN||u.email_verified===false){google.accounts.oauth2.revoke(token,()=>{});token=null;
+      gateMsg('บัญชี <b>'+esc(u.email||'ไม่ทราบ')+'</b> ไม่มีสิทธิ์เข้าใช้ระบบนี้ กรุณาเข้าสู่ระบบด้วย admin@thaifuturefood.org',true);return;}
+    enter(u.email);
+  }catch(e){gateMsg('ตรวจสอบบัญชีไม่สำเร็จ ลองอีกครั้ง',true);}
+}
+initGis();
+$('logout').onclick=()=>{if(token)google.accounts.oauth2.revoke(token,()=>{});token=null;rows=[];clearInterval(timer);started=false;
+  $('app').hidden=true;$('gate').hidden=false;$('grid').innerHTML='';gateMsg('ออกจากระบบแล้ว');};
 
 function enter(label){
   $('gate').hidden=true;$('app').hidden=false;$('who').textContent='เข้าสู่ระบบ: '+label;
-  route();if(!started){started=true;loadData();}
+  route();if(!started){started=true;loadData();timer=setInterval(loadData,300000);}
 }
 
-/* ---------- data from Google Drive ---------- */
+/* ---------- data from Google Drive (Sheets API) ---------- */
 async function loadData(){
-  const mcp=await window.claude.use('mcp');
-  if(!mcp){showErr('หน้านี้ยังเชื่อม Google Sheets ไม่ได้ในมุมมองนี้ ลองเปิดหน้าจาก claude.ai อีกครั้ง');return;}
-  mcp.watchTool('Google Sheets','get_values',{spreadsheetId:SHEET,range:RANGE},ev=>{
-    if(ev.type==='data'){
-      const v=ev.result.payload&&ev.result.payload.values;
-      if(!Array.isArray(v)||v.length<2){showErr('ไม่พบข้อมูลในชีต Members');return;}
-      $('err').innerHTML='';parse(v);
-      const at=ev.result.cache?new Date(ev.result.cache.storedAt):new Date();
-      $('src').innerHTML=$('src').innerHTML.split(' · อัปเดต')[0]+' · อัปเดต '+esc(at.toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}));
-    }else{
-      const e=ev.error||{},c=e.code;
-      const deny=['needs_reauth','server_not_connected','blocked_by_policy','approval_required','not_in_manifest','selection_required'];
-      if(deny.includes(c)){rows=[];render();}
-      const msg={needs_reauth:'สิทธิ์ Google หมดอายุ — เชื่อมต่อ Google Sheets ใหม่ที่ claude.ai › Settings › Connectors',
-        server_not_connected:'ยังไม่ได้เชื่อม Google Sheets — เพิ่มที่ claude.ai › Settings › Connectors ด้วยบัญชี admin@thaifuturefood.org',
-        selection_required:'มี Google Sheets มากกว่าหนึ่งบัญชี กรุณาเลือกบัญชี admin@thaifuturefood.org',
-        approval_required:'ต้องอนุญาตให้หน้านี้อ่าน Google Sheets ก่อน',
-        not_in_manifest:'ยังไม่ได้อนุญาตให้หน้านี้อ่าน Google Sheets',
-        blocked_by_policy:'องค์กรของคุณปิดการใช้ Google Sheets จากหน้านี้',
-        tool_error:'Google Sheets ตอบกลับข้อผิดพลาด: '+(e.message||'')+' (บัญชีที่เชื่อมอาจไม่มีสิทธิ์ในไฟล์)'}[c]||('โหลดข้อมูลไม่สำเร็จชั่วคราว ('+(c||'error')+') ลองโหลดใหม่');
-      showErr(msg,c==='approval_required'||c==='not_in_manifest'||c==='server_unavailable'||c==='upstream_error');
-    }
-  },{cache:{staleTime:60000,gcTime:86400000},refetchInterval:300000});
+  if(!token)return;
+  try{
+    const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET+'/values/'+encodeURIComponent(RANGE),{headers:{Authorization:'Bearer '+token}});
+    if(res.status===401){showErr('สิทธิ์เข้าใช้หมดอายุ (ครบ 1 ชั่วโมง) กดออกจากระบบแล้วเข้าสู่ระบบใหม่');return;}
+    if(res.status===403||res.status===404){showErr('บัญชีนี้ไม่มีสิทธิ์เปิด Google Sheet ทะเบียนสมาชิก หรือไม่พบไฟล์');rows=[];render();return;}
+    if(!res.ok){showErr('โหลดข้อมูลไม่สำเร็จ ('+res.status+')',true);return;}
+    const v=(await res.json()).values;
+    if(!Array.isArray(v)||v.length<2){showErr('ไม่พบข้อมูลในชีต Members');return;}
+    $('err').innerHTML='';parse(v);
+    $('src').innerHTML=$('src').innerHTML.split(' · อัปเดต')[0]+' · อัปเดต '+esc(new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}));
+  }catch(e){showErr('เชื่อมต่อ Google ไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่',true);}
 }
 function showErr(m,canRetry){
   $('err').innerHTML='<div class="alert">'+esc(m)+(canRetry?' <button class="btn pk" id="again" style="margin-left:8px">ลองอีกครั้ง</button>':'')+'</div>';
   if(!rows.length)$('charts').innerHTML='';
-  const a=$('again');if(a)a.onclick=async()=>{try{const mcp=await window.claude.use('mcp');const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SHEET,range:RANGE},{cache:{refresh:true,staleTime:60000,gcTime:86400000}});$('err').innerHTML='';parse(r.payload.values);}catch(e){showErr('ยังโหลดไม่ได้ ('+(e.code||'error')+')',true);}};
+  const a=$('again');if(a)a.onclick=loadData;
 }
 function parse(v){
   const h=v[0];
