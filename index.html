@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>รายงานสมาชิกสมาคม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a tidy, cheerful association register — work tool first, warm not childish.
+   IDEA: the member card from a trade-association directory, stamped HQ / branch.
+   PICTURE: the live register itself — totals strip, split bar, then the card wall.
+   COLOUR and TYPE: sunflower yellow field, hot pink accent, plum ink; Mitr titles, Plex Sans Thai body.
+   LAYOUT: yellow header band edge to edge, filters in a sticky bar, cards in an even grid. */
+:root{color-scheme:light dark;
+--bg:light-dark(#fffaf0,#1c0f20);--card:light-dark(#ffffff,#2a1730);--ink:light-dark(#2b1330,#fbeef4);
+--mute:light-dark(#6f5a72,#c9b3cc);--line:light-dark(#f1e3c4,#43294a);
+--y:#ffd23f;--y2:light-dark(#fff1b8,#4a3a12);--p:#e8407f;--p2:light-dark(#ffe0ec,#4b1d33);--pk:light-dark(#c42a66,#ff86b3)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans Thai",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Mitr,"IBM Plex Sans Thai",sans-serif;font-weight:600;line-height:1.15;margin:0;text-wrap:balance}
+.band{padding:clamp(22px,4vw,48px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+button,select,input{font:inherit;font-size:16px;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--p);outline-offset:2px}
+.btn{min-height:44px;padding:0 18px;border-radius:999px;border:2px solid var(--ink);background:transparent;font-weight:600}
+.btn.pk{background:var(--p);border-color:var(--p);color:#fff}
+.btn.y{background:var(--y);border-color:var(--y);color:#2b1330}
+/* gate */
+#gate{min-height:100vh;display:grid;place-items:center;background:var(--y);color:#2b1330;padding:24px}
+.gbox{background:#fff;border-radius:28px;padding:clamp(24px,5vw,44px);max-width:460px;width:100%;box-shadow:12px 12px 0 var(--p)}
+.gbox h1{font-size:30px}.gbox p{color:#5c4760;margin:.6em 0}
+.lock{width:64px;height:64px;border-radius:20px;background:var(--p2);display:grid;place-items:center;margin-bottom:18px;background:#ffe0ec}
+.gstate{margin-top:18px;padding:14px 16px;border-radius:14px;background:#fff6d6;font-size:15px}
+.gstate.bad{background:#ffe0ec;color:#8c1c4a}
+.gstate b{word-break:break-all}
+/* app */
+#app[hidden],#gate[hidden]{display:none}
+header.top{background:var(--y);color:#2b1330}
+.topbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center;font-weight:600}
+.dot{width:40px;height:40px;border-radius:12px;background:var(--p);display:grid;place-items:center;color:#fff;font-family:Mitr}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border-radius:999px;color:#2b1330;text-decoration:none;font-weight:600}
+nav a.on{background:#2b1330;color:var(--y)}
+.who{font-size:14px;background:#fff;border-radius:999px;padding:6px 14px;word-break:break-all}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:end;margin-top:28px}
+.hero h1{font-size:clamp(32px,4.6vw,50px)}
+.hero p{margin:.5em 0 0;color:#5c4760;max-width:60ch}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:#fff;border-radius:18px;padding:14px}
+.kpi b{display:block;font:600 clamp(28px,4vw,40px)/1 Mitr;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:#5c4760}
+.kpi.pk{background:var(--p);color:#fff}.kpi.pk span{color:#ffe0ec}
+.split{display:flex;height:16px;border-radius:99px;overflow:hidden;margin-top:12px;background:#fff}
+.split i{display:block;height:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-top:6px;color:#5c4760}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+/* charts */
+.charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}
+.panel h3{font-size:18px;margin-bottom:12px}
+.bar{display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr) 2.4em;gap:8px;align-items:center;font-size:14px;padding:3px 0;background:none;border:0;width:100%;text-align:left;border-radius:8px}
+.bar:hover{background:var(--y2)}
+.bar .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .tr{height:12px;background:var(--y2);border-radius:99px;overflow:hidden}
+.bar .tr i{display:block;height:100%;background:var(--p);border-radius:99px}
+.bar .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+/* filters */
+.filters{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:12px max(5vw,16px)}
+.frow{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.frow input[type=search]{flex:1 1 260px;min-height:44px;border-radius:999px;border:2px solid var(--line);background:var(--card);padding:0 18px}
+.frow select{min-height:44px;border-radius:999px;border:2px solid var(--line);background:var(--card);padding:0 12px;max-width:100%}
+.chip{min-height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--line);background:var(--card);font-weight:600}
+.chip[aria-pressed=true]{background:var(--p);border-color:var(--p);color:#fff}
+.count{font-size:14px;color:var(--mute);margin:14px 0 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:16px}
+.mc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px;position:relative}
+.mc .no{font:600 13px Mitr;color:var(--pk)}
+.mc h3{font-size:19px;padding-right:96px}
+.mc .en{font-size:13px;color:var(--mute);margin-top:-6px}
+.stamp{position:absolute;top:16px;right:16px;font:600 12px Mitr;padding:4px 10px;border-radius:999px;background:var(--y);color:#2b1330;white-space:nowrap}
+.stamp.br{background:var(--p);color:#fff}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--y2);font-weight:500}
+.tag.p{background:var(--p2);color:var(--pk)}
+dl{margin:0;display:grid;grid-template-columns:5.6em minmax(0,1fr);gap:4px 10px;font-size:14.5px}
+dt{color:var(--mute)}dd{margin:0;overflow-wrap:anywhere}
+dd small{color:var(--mute);display:block}
+.ct{border-top:1px dashed var(--line);padding-top:10px}
+.ct a{color:var(--pk)}
+.empty{padding:40px;text-align:center;color:var(--mute);background:var(--card);border-radius:22px;border:1px dashed var(--line)}
+.note{font-size:14px;color:var(--mute)}
+.alert{padding:14px 18px;border-radius:16px;background:var(--p2);color:var(--pk);margin:16px 0}
+footer{border-top:1px solid var(--line);font-size:14px;color:var(--mute)}
+footer a{color:var(--pk)}
+/* pitch */
+.pitch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.1fr);gap:16px}
+.q{background:var(--card);border:2px solid var(--y);border-radius:22px;padding:20px}
+.q .qn{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.q .qn b{width:36px;height:36px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-family:Mitr}
+.q h3{font-size:21px}
+.q ul{margin:.4em 0 0;padding-left:1.1em;font-size:15px}.q li{margin:.25em 0}
+.timer{background:#2b1330;color:#fff;border-radius:22px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.timer b{font:600 clamp(56px,7vw,84px)/1 Mitr;color:var(--y);font-variant-numeric:tabular-nums}
+.timer.over b{color:var(--p)}
+.script{margin-top:18px;background:var(--y2);border-radius:20px;padding:18px 22px;font-size:16px}
+.loading{display:flex;gap:10px;align-items:center;color:var(--mute);padding:30px 0}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--y2);border-top-color:var(--p);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(1turn)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}}
+@media(max-width:980px){.charts{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.pitch{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media(max-width:760px){.hero{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.charts,.pitch{grid-template-columns:minmax(0,1fr)}.filters{position:static}.mc h3{padding-right:0;margin-top:22px}}
+</style>
+</head>
+<body>
+
+<section id="gate">
+  <div class="gbox">
+    <div class="lock"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e8407f" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4" fill="#e8407f"/></svg></div>
+    <h1>ระบบรายงานสมาชิกสมาคม</h1>
+    <p>สำหรับผู้ดูแลระบบเท่านั้น ระบบจะตรวจอีเมลบัญชีที่เข้าใช้ให้ตรงกับ <b>admin@thaifuturefood.org</b></p>
+    <div class="gstate" id="gstate">กำลังตรวจสอบบัญชีผู้ใช้…</div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pk" id="retry" hidden>ตรวจสอบอีกครั้ง</button></div>
+  </div>
+</section>
+
+<div id="app" hidden>
+<header class="top band" style="padding-bottom:28px">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="dot">TF</span><span>Thai Future Food · ทะเบียนสมาชิก</span></div>
+      <nav><a href="#report" id="n-report">รายงาน</a><a href="#pitch" id="n-pitch">นำเสนอ 1 นาที</a></nav>
+      <span class="who" id="who"></span>
+    </div>
+    <div class="hero" id="heroBox">
+      <div>
+        <h1 id="title">สรุปสมาชิกสมาคม</h1>
+        <p id="sub">ดึงข้อมูลล่าสุดจาก Google Drive…</p>
+      </div>
+      <div>
+        <div class="kpis" id="kpis"></div>
+        <div class="split" id="split"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="v-report">
+  <section class="band" style="padding-bottom:12px"><div class="wrap">
+    <div id="err"></div>
+    <div class="charts" id="charts"><div class="loading"><span class="spin"></span>กำลังโหลดข้อมูลจาก Google Sheets…</div></div>
+  </div></section>
+
+  <div class="filters"><div class="frow">
+    <input type="search" id="q" placeholder="ค้นหา ชื่อบริษัท ผู้แทน ที่อยู่ เบอร์ อีเมล…" aria-label="ค้นหา">
+    <button class="chip" data-mt="" aria-pressed="true">ทั้งหมด</button>
+    <button class="chip" data-mt="สามัญ" aria-pressed="false">สามัญ</button>
+    <button class="chip" data-mt="วิสามัญ" aria-pressed="false">วิสามัญ</button>
+    <select id="fSize" aria-label="ประเภทวิสาหกิจ"><option value="">ประเภทวิสาหกิจ: ทั้งหมด</option></select>
+    <select id="fOff" aria-label="สำนักงาน"><option value="">สำนักงาน: ทั้งหมด</option><option value="hq">สำนักงานใหญ่</option><option value="br">สาขา</option></select>
+    <select id="fProv" aria-label="จังหวัด"><option value="">จังหวัด: ทั้งหมด</option></select>
+    <button class="chip" id="reset">ล้างตัวกรอง</button>
+  </div></div>
+
+  <section class="band" style="padding-top:8px"><div class="wrap">
+    <div class="count"><span id="count"></span><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="cpEmail">คัดลอกอีเมลที่กรอง</button><button class="btn" id="cpCsv">คัดลอกเป็นตาราง</button></span></div>
+    <div class="grid" id="grid"></div>
+  </div></section>
+</main>
+
+<main id="v-pitch" hidden>
+  <section class="band"><div class="wrap">
+    <p class="note" style="margin:0 0 6px">บทที่ 13 · นำเสนอผลงาน</p>
+    <h2 style="font-size:clamp(28px,4vw,40px);margin-bottom:20px">นำเสนอ 1 นาที ตอบ 3 ข้อ</h2>
+    <div class="pitch">
+      <div class="q"><div class="qn"><b>1</b><h3>แก้ปัญหาอะไร</h3></div>
+        <p class="note" style="margin:0">ก่อนมีเว็บนี้ ทำงานกันยังไง</p>
+        <ul>
+          <li>ทะเบียนสมาชิกอยู่ในไฟล์ Excel 37 คอลัมน์ เปิดบนมือถือแทบอ่านไม่ได้</li>
+          <li>หาเบอร์/ผู้แทนของบริษัทหนึ่งต้องเลื่อนหาทีละแถว</li>
+          <li>ส่งไฟล์ต่อกันทางไลน์-อีเมล เวอร์ชันไม่ตรงกัน และข้อมูลติดต่อหลุดง่าย</li>
+          <li>ตอนนี้: ลิงก์เดียว ค้นหา-กรองได้ทันที เห็นเฉพาะ admin</li>
+        </ul></div>
+      <div class="q"><div class="qn"><b>2</b><h3>ต่อกับอะไรบ้าง</h3></div>
+        <p class="note" style="margin:0">Sheets, Supabase, Connector ไหน</p>
+        <ul>
+          <li><b>Google Drive / Sheets</b> — ไฟล์ "TFFA ทะเบียนสมาชิกสมาคม" เป็นฐานข้อมูล แก้ใน Sheet แล้วเว็บอัปเดตเอง</li>
+          <li><b>Google Sheets Connector</b> ของ Claude อ่านข้อมูลด้วยสิทธิ์ของผู้เปิดดู ข้อมูลไม่ฝังในหน้าเว็บ</li>
+          <li><b>บัญชี Claude</b> ตรวจอีเมลต้องเป็น admin@thaifuturefood.org</li>
+          <li>ไม่ใช้ Supabase — ข้อมูล 70 ราย Sheet เพียงพอ</li>
+        </ul></div>
+      <div class="q"><div class="qn"><b>3</b><h3>จะทำอะไรต่อ</h3></div>
+        <p class="note" style="margin:0">ฟีเจอร์ถัดไป หรือใครจะได้ใช้</p>
+        <ul>
+          <li>ฟอร์มเพิ่ม/แก้ไขสมาชิก เขียนกลับลง Sheet</li>
+          <li>แจ้งเตือนต่ออายุสมาชิกภาพ และสรุปรายเดือนส่งอีเมล</li>
+          <li>เพิ่มรายชื่ออีเมลกรรมการที่อนุญาต</li>
+          <li>ผู้ใช้: ฝ่ายทะเบียนสมาคม กรรมการ และทีมจัดงาน</li>
+        </ul></div>
+      <div class="timer" id="timer">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ffd23f" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></svg>
+        <b id="tv">1:00</b><span>นาทีต่อคน</span>
+        <div style="display:flex;gap:8px"><button class="btn y" id="tStart">เริ่มจับเวลา</button><button class="btn" style="border-color:#fff;color:#fff" id="tReset">รีเซ็ต</button></div>
+      </div>
+    </div>
+    <div class="script"><b>บทพูด 60 วินาที:</b> "สมาคมมีสมาชิก <span class="liveTotal">70</span> ราย ข้อมูลเดิมอยู่ใน Excel ที่เปิดบนมือถือแทบไม่ได้ เราย้ายข้อมูลขึ้น Google Drive แล้วทำเว็บนี้อ่านจาก Sheet โดยตรง เข้าได้เฉพาะบัญชี admin ของสมาคม — ค้นชื่อบริษัท ดูผู้แทนทั้งสองคน ที่อยู่ว่าเป็นสำนักงานใหญ่หรือสาขา ประเภทสมาชิก ประเภทวิสาหกิจ และเบอร์ติดต่อได้ในหน้าเดียว ขั้นต่อไปคือฟอร์มแก้ไขข้อมูลและแจ้งเตือนต่ออายุ ให้ฝ่ายทะเบียนและกรรมการใช้ร่วมกัน" — แล้วเปิดเว็บจริงบนมือถือให้ดู ดีกว่าสไลด์ 10 หน้า</div>
+  </div></section>
+</main>
+
+<footer class="band" style="padding-block:20px"><div class="wrap" id="src">แหล่งข้อมูล: <a href="https://docs.google.com/spreadsheets/d/1rRjx-o-7cvIqdhHVPc1lbYqYFlX5R2m_zcQvX94aDDs/edit" target="_blank" rel="noopener">Google Sheets · TFFA ทะเบียนสมาชิกสมาคม</a> (จากไฟล์ทะเบียนสมาชิก update 13/03/2568)</div></footer>
+</div>
+
+<script>
+{
+const ADMIN='admin@thaifuturefood.org';
+const SHEET='1rRjx-o-7cvIqdhHVPc1lbYqYFlX5R2m_zcQvX94aDDs';
+const RANGE='Members!A1:T500';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let rows=[],mt='',started=false;
+
+/* ---------- gate ---------- */
+const gs=$('gstate');
+function gateMsg(html,bad){gs.innerHTML=html;gs.className='gstate'+(bad?' bad':'');}
+async function checkGate(){
+  $('retry').hidden=true;gateMsg('กำลังตรวจสอบบัญชีผู้ใช้…');
+  const user=window.claude?await window.claude.use('user'):null;
+  if(!user){gateMsg('เปิดหน้านี้ผ่าน claude.ai ด้วยบัญชี admin@thaifuturefood.org เพื่อเข้าสู่ระบบ',true);$('retry').hidden=false;return;}
+  const me=await user.me();
+  const em=(me.email||'').trim().toLowerCase();
+  if(em===ADMIN||(!me.email&&me.isOwner)){enter(me.email||'เจ้าของระบบ');return;}
+  if(em)gateMsg('บัญชี <b>'+esc(me.email)+'</b> ไม่มีสิทธิ์เข้าใช้ระบบนี้ กรุณาเข้าสู่ระบบด้วย admin@thaifuturefood.org',true);
+  else gateMsg('ไม่สามารถอ่านอีเมลของบัญชีนี้ได้ จึงไม่อนุญาตให้เข้าใช้ กรุณาเข้าสู่ระบบด้วย admin@thaifuturefood.org',true);
+  $('retry').hidden=false;
+}
+$('retry').onclick=checkGate;
+let tries=0;(function wait(){if(window.claude)checkGate();else if(++tries<40)setTimeout(wait,250);else checkGate();})();
+
+function enter(label){
+  $('gate').hidden=true;$('app').hidden=false;$('who').textContent='เข้าสู่ระบบ: '+label;
+  route();if(!started){started=true;loadData();}
+}
+
+/* ---------- data from Google Drive ---------- */
+async function loadData(){
+  const mcp=await window.claude.use('mcp');
+  if(!mcp){showErr('หน้านี้ยังเชื่อม Google Sheets ไม่ได้ในมุมมองนี้ ลองเปิดหน้าจาก claude.ai อีกครั้ง');return;}
+  mcp.watchTool('Google Sheets','get_values',{spreadsheetId:SHEET,range:RANGE},ev=>{
+    if(ev.type==='data'){
+      const v=ev.result.payload&&ev.result.payload.values;
+      if(!Array.isArray(v)||v.length<2){showErr('ไม่พบข้อมูลในชีต Members');return;}
+      $('err').innerHTML='';parse(v);
+      const at=ev.result.cache?new Date(ev.result.cache.storedAt):new Date();
+      $('src').innerHTML=$('src').innerHTML.split(' · อัปเดต')[0]+' · อัปเดต '+esc(at.toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}));
+    }else{
+      const e=ev.error||{},c=e.code;
+      const deny=['needs_reauth','server_not_connected','blocked_by_policy','approval_required','not_in_manifest','selection_required'];
+      if(deny.includes(c)){rows=[];render();}
+      const msg={needs_reauth:'สิทธิ์ Google หมดอายุ — เชื่อมต่อ Google Sheets ใหม่ที่ claude.ai › Settings › Connectors',
+        server_not_connected:'ยังไม่ได้เชื่อม Google Sheets — เพิ่มที่ claude.ai › Settings › Connectors ด้วยบัญชี admin@thaifuturefood.org',
+        selection_required:'มี Google Sheets มากกว่าหนึ่งบัญชี กรุณาเลือกบัญชี admin@thaifuturefood.org',
+        approval_required:'ต้องอนุญาตให้หน้านี้อ่าน Google Sheets ก่อน',
+        not_in_manifest:'ยังไม่ได้อนุญาตให้หน้านี้อ่าน Google Sheets',
+        blocked_by_policy:'องค์กรของคุณปิดการใช้ Google Sheets จากหน้านี้',
+        tool_error:'Google Sheets ตอบกลับข้อผิดพลาด: '+(e.message||'')+' (บัญชีที่เชื่อมอาจไม่มีสิทธิ์ในไฟล์)'}[c]||('โหลดข้อมูลไม่สำเร็จชั่วคราว ('+(c||'error')+') ลองโหลดใหม่');
+      showErr(msg,c==='approval_required'||c==='not_in_manifest'||c==='server_unavailable'||c==='upstream_error');
+    }
+  },{cache:{staleTime:60000,gcTime:86400000},refetchInterval:300000});
+}
+function showErr(m,canRetry){
+  $('err').innerHTML='<div class="alert">'+esc(m)+(canRetry?' <button class="btn pk" id="again" style="margin-left:8px">ลองอีกครั้ง</button>':'')+'</div>';
+  if(!rows.length)$('charts').innerHTML='';
+  const a=$('again');if(a)a.onclick=async()=>{try{const mcp=await window.claude.use('mcp');const r=await mcp.callTool('Google Sheets','get_values',{spreadsheetId:SHEET,range:RANGE},{cache:{refresh:true,staleTime:60000,gcTime:86400000}});$('err').innerHTML='';parse(r.payload.values);}catch(e){showErr('ยังโหลดไม่ได้ ('+(e.code||'error')+')',true);}};
+}
+function parse(v){
+  const h=v[0];
+  rows=v.slice(1).filter(r=>r.some(x=>x)).map(r=>{const o={};h.forEach((k,i)=>o[k]=(r[i]??'').toString().trim());
+    o.no=String(o['เลขที่']).padStart(3,'0');
+    const t=String(o['เลขทะเบียนนิติบุคคล']).replace(/\D/g,'');o.tax=t?t.padStart(13,'0'):'';
+    o.br=o['สำนักงาน'].startsWith('สาขา');return o;});
+  fillSelects();render();
+}
+
+/* ---------- render ---------- */
+const SIZE_ORDER=['วิสาหกิจขนาดย่อม (S)','วิสาหกิจขนาดกลาง (M)','วิสาหกิจขนาดใหญ่ (L)','ไม่ระบุ'];
+function tally(list,key){const m={};list.forEach(r=>{const k=r[key]||'ไม่ระบุ';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]);}
+function fillSelects(){
+  const sz=$('fSize'),pv=$('fProv'),keepS=sz.value,keepP=pv.value;
+  const sizes=SIZE_ORDER.filter(s=>rows.some(r=>r['ประเภทวิสาหกิจ']===s)).concat([...new Set(rows.map(r=>r['ประเภทวิสาหกิจ']))].filter(s=>!SIZE_ORDER.includes(s)));
+  sz.innerHTML='<option value="">ประเภทวิสาหกิจ: ทั้งหมด</option>'+sizes.map(s=>'<option>'+esc(s)+'</option>').join('');
+  pv.innerHTML='<option value="">จังหวัด: ทั้งหมด</option>'+tally(rows,'จังหวัด').map(([k,n])=>'<option value="'+esc(k)+'">'+esc(k)+' ('+n+')</option>').join('');
+  sz.value=keepS;pv.value=keepP;
+}
+function filtered(){
+  const q=$('q').value.trim().toLowerCase(),s=$('fSize').value,o=$('fOff').value,p=$('fProv').value;
+  return rows.filter(r=>(!mt||r['ประเภทสมาชิก']===mt)&&(!s||r['ประเภทวิสาหกิจ']===s)&&(!p||r['จังหวัด']===p)&&(!o||(o==='br')===r.br)
+    &&(!q||Object.values(r).join(' ').toLowerCase().includes(q)));
+}
+function bars(title,list,key,filterId){
+  const max=Math.max(1,...list.map(x=>x[1]));
+  return '<div class="panel"><h3>'+title+'</h3>'+list.map(([k,n])=>'<button class="bar" data-f="'+filterId+'" data-v="'+esc(k)+'" title="กรอง: '+esc(k)+'"><span class="t">'+esc(k)+'</span><span class="tr"><i style="width:'+(n/max*100).toFixed(1)+'%"></i></span><span class="n">'+n+'</span></button>').join('')+'</div>';
+}
+function render(){
+  const all=rows,n=all.length,reg=all.filter(r=>r['ประเภทสมาชิก']==='สามัญ').length,ext=all.filter(r=>r['ประเภทสมาชิก']==='วิสามัญ').length,br=all.filter(r=>r.br).length;
+  document.querySelectorAll('.liveTotal').forEach(e=>e.textContent=n||'70');
+  $('title').textContent=n?('สมาชิกสมาคม '+n+' ราย: สามัญ '+reg+' · วิสามัญ '+ext):'สรุปสมาชิกสมาคม';
+  $('sub').textContent=n?('สำนักงานใหญ่ '+(n-br)+' ราย ที่อยู่เป็นสาขา '+br+' ราย · ผู้ผลิต (Manufacturer) '+all.filter(r=>/manufacturer/i.test(r['ลักษณะธุรกิจ'])).length+' ราย · อยู่ในกรุงเทพฯ '+all.filter(r=>r['จังหวัด']==='กรุงเทพมหานคร').length+' ราย'):'ดึงข้อมูลล่าสุดจาก Google Drive…';
+  $('kpis').innerHTML=[['สมาชิกทั้งหมด',n,'pk'],['สามัญ',reg,''],['วิสามัญ',ext,''],['ที่อยู่สาขา',br,'']].map(([l,v,c])=>'<div class="kpi '+c+'"><b>'+v+'</b><span>'+l+'</span></div>').join('');
+  $('split').innerHTML=n?'<i style="width:'+(reg/n*100)+'%;background:#e8407f"></i><i style="width:'+(ext/n*100)+'%;background:#2b1330"></i>':'';
+  $('legend').innerHTML=n?'<span><i style="background:#e8407f"></i>สามัญ '+Math.round(reg/n*100)+'%</span><span><i style="background:#2b1330"></i>วิสามัญ '+Math.round(ext/n*100)+'%</span>':'';
+  if(n){
+    const sz=SIZE_ORDER.map(s=>[s,all.filter(r=>r['ประเภทวิสาหกิจ']===s).length]).filter(x=>x[1]);
+    $('charts').innerHTML=bars('ประเภทวิสาหกิจ',sz,'ประเภทวิสาหกิจ','fSize')+bars('ลักษณะธุรกิจ',tally(all,'ลักษณะธุรกิจ').slice(0,7),'ลักษณะธุรกิจ','q')+bars('จังหวัดที่ตั้งสำนักงาน (8 อันดับแรก)',tally(all,'จังหวัด').slice(0,8),'จังหวัด','fProv');
+  }
+  const f=filtered();
+  $('count').textContent=n?('แสดง '+f.length+' จาก '+n+' ราย'):'';
+  $('grid').innerHTML=!n?'':!f.length?'<div class="empty">ไม่พบสมาชิกที่ตรงกับตัวกรอง</div>':f.map(card).join('');
+}
+function card(r){
+  const rep=(th,en)=>th?esc(th)+(en?'<small>'+esc(en)+'</small>':''):'<span class="note">—</span>';
+  const tel=r['โทรศัพท์'],em=r['อีเมล'].split(/[,;\s]+/).filter(Boolean),web=r['เว็บไซต์'];
+  return '<article class="mc"><span class="stamp'+(r.br?' br':'')+'">'+esc(r['สำนักงาน'])+'</span>'
+  +'<span class="no">สมาชิกเลขที่ '+esc(r.no)+'</span><h3>'+esc(r['ชื่อบริษัท (ไทย)'])+'</h3>'
+  +(r['ชื่อบริษัท (อังกฤษ)']?'<div class="en">'+esc(r['ชื่อบริษัท (อังกฤษ)'])+'</div>':'')
+  +'<div class="tags"><span class="tag p">สมาชิก'+esc(r['ประเภทสมาชิก'])+'</span><span class="tag">'+esc(r['ประเภทวิสาหกิจ'])+'</span>'+(r['ลักษณะธุรกิจ']&&r['ลักษณะธุรกิจ']!=='ไม่ระบุ'?'<span class="tag">'+esc(r['ลักษณะธุรกิจ'])+'</span>':'')+'</div>'
+  +'<dl><dt>ผู้แทน 1</dt><dd>'+rep(r['ผู้แทน 1'],r['ผู้แทน 1 (EN)'])+'</dd><dt>ผู้แทน 2</dt><dd>'+rep(r['ผู้แทน 2'],r['ผู้แทน 2 (EN)'])+'</dd>'
+  +'<dt>ที่อยู่</dt><dd>'+esc(r['ที่อยู่สำนักงาน'])+'<small>'+esc(r['สำนักงาน'])+(r.tax?' · เลขนิติบุคคล '+esc(r.tax):'')+'</small></dd></dl>'
+  +'<dl class="ct"><dt>ผู้ติดต่อ</dt><dd>'+(esc(r['ผู้ติดต่อ'])||'—')+'</dd><dt>โทร</dt><dd>'+(esc(tel)||'—')+(r['โทรสาร']?'<small>แฟกซ์ '+esc(r['โทรสาร'])+'</small>':'')+'</dd>'
+  +'<dt>อีเมล</dt><dd>'+(em.length?em.map(e=>esc(e)).join('<br>'):'—')+'</dd>'
+  +(web?'<dt>เว็บไซต์</dt><dd><a href="https://'+esc(web.replace(/^https?:\/\//,''))+'" target="_blank" rel="noopener">'+esc(web)+'</a></dd>':'')+'</dl></article>';
+}
+
+/* ---------- events ---------- */
+$('q').oninput=render;['fSize','fOff','fProv'].forEach(id=>$(id).onchange=render);
+document.querySelectorAll('.chip[data-mt]').forEach(b=>b.onclick=()=>{mt=b.dataset.mt;document.querySelectorAll('.chip[data-mt]').forEach(x=>x.setAttribute('aria-pressed',x===b));render();});
+$('reset').onclick=()=>{$('q').value='';$('fSize').value='';$('fOff').value='';$('fProv').value='';mt='';document.querySelectorAll('.chip[data-mt]').forEach(x=>x.setAttribute('aria-pressed',!x.dataset.mt));render();};
+$('charts').onclick=e=>{const b=e.target.closest('.bar');if(!b)return;const el=$(b.dataset.f);el.value=b.dataset.v;render();document.querySelector('.filters').scrollIntoView({behavior:'smooth'});};
+async function copy(txt,btn){const o=btn.textContent;try{await navigator.clipboard.writeText(txt);btn.textContent='คัดลอกแล้ว ✓';}catch(e){btn.textContent='คัดลอกไม่ได้';}setTimeout(()=>btn.textContent=o,1600);}
+$('cpEmail').onclick=e=>copy([...new Set(filtered().flatMap(r=>r['อีเมล'].split(/[,;\s]+/).filter(Boolean)))].join(', '),e.currentTarget);
+$('cpCsv').onclick=e=>{const k=['no','ชื่อบริษัท (ไทย)','ผู้แทน 1','ผู้แทน 2','ที่อยู่สำนักงาน','สำนักงาน','ประเภทสมาชิก','ประเภทวิสาหกิจ','ผู้ติดต่อ','โทรศัพท์','อีเมล'];
+  copy(['เลขที่\t'+k.slice(1).join('\t')].concat(filtered().map(r=>k.map(x=>String(r[x]||'').replace(/\s+/g,' ')).join('\t'))).join('\n'),e.currentTarget);};
+
+/* ---------- views ---------- */
+function route(){const p=location.hash==='#pitch';$('v-report').hidden=p;$('v-pitch').hidden=!p;$('heroBox').hidden=p;$('n-report').classList.toggle('on',!p);$('n-pitch').classList.toggle('on',p);}
+addEventListener('hashchange',route);
+
+/* ---------- 1-minute timer ---------- */
+let left=60,tid=null;
+const show=()=>{$('tv').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');$('timer').classList.toggle('over',left===0);};
+$('tStart').onclick=()=>{if(tid){clearInterval(tid);tid=null;$('tStart').textContent='เริ่มต่อ';return;}
+  if(left===0)left=60;$('tStart').textContent='หยุด';tid=setInterval(()=>{left--;show();if(left<=0){clearInterval(tid);tid=null;$('tStart').textContent='เริ่มใหม่';}},1000);};
+$('tReset').onclick=()=>{clearInterval(tid);tid=null;left=60;show();$('tStart').textContent='เริ่มจับเวลา';};
+}
+</script>
+</body>
+</html>
